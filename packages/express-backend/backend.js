@@ -17,35 +17,49 @@ app.listen(port, () => {
 });
 
 const users = {
-    users_list: [
-      {
-        id: "xyz789",
-        name: "Charlie",
-        job: "Janitor"
-      },
-      {
-        id: "abc123",
-        name: "Mac",
-        job: "Bouncer"
-      },
-      {
-        id: "ppp222",
-        name: "Mac",
-        job: "Professor"
-      },
-      {
-        id: "yat999",
-        name: "Dee",
-        job: "Aspring actress"
-      },
-      {
-        id: "zap555",
-        name: "Dennis",
-        job: "Bartender"
-      }
-    ]
-  };
+  users_list: [
+    {
+      id: "xyz789",
+      name: "Charlie",
+      job: "Janitor"
+    },
+    {
+      id: "abc123",
+      name: "Mac",
+      job: "Bouncer"
+    },
+    {
+      id: "ppp222",
+      name: "Mac",
+      job: "Professor"
+    },
+    {
+      id: "yat999",
+      name: "Dee",
+      job: "Aspiring actress"
+    },
+    {
+      id: "zap555",
+      name: "Dennis",
+      job: "Bartender"
+    }
+  ]
+};
 
-  app.get("/users", (req, res) => {
+// Keep only this /users route
+app.get("/users", (req, res) => {
+  const name = req.query.name;
+  if (name != undefined) {
+    let result = findUserByName(name);
+    result = { users_list: result };
+    res.send(result);
+  } else {
     res.send(users);
-  });
+  }
+});
+
+const findUserByName = (name) => {
+  return users["users_list"].filter(
+    (user) => user["name"] === name
+  );
+};
