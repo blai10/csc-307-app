@@ -13,9 +13,27 @@ function handleChange(event) {
     else setPerson({ name: value, job: person["job"] });
   }
   function submitForm() {
-    props.handleSubmit(person);
-    setPerson({ name: "", job: "" });
+    fetch("http://localhost:8000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(person),
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json(); // Parse JSON if insertion is successful
+        } else {
+          throw new Error("Failed to create user");
+        }
+      })
+      .then((data) => {
+        props.handleSubmit(data); // Update the parent state only if the insertion succeeded
+        setPerson({ name: "", job: "" }); // Reset the form
+      })
+      .catch((error) => console.error("Error:", error));
   }
+  
   return (
     <form>
       <label htmlFor="name">Name</label>
