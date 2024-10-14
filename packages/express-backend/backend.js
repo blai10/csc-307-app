@@ -1,9 +1,10 @@
 // backend.js
+import cors from "cors";
 import express from "express";
 
 const app = express();
 const port = 8000;
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -117,6 +118,6 @@ app.delete("/users/:id", (req, res) => {
     if (deletedUser === undefined) {
       res.status(404).send("Resource not found. User could not be deleted.");
     } else {
-      res.status(204).send(); // 204 No Content, indicating successful deletion
+      res.status(204).send(); 
     }
   });
