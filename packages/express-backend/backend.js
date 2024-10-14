@@ -5,7 +5,6 @@ import express from "express";
 const app = express();
 const port = 8000;
 
-// Helper function to generate a random 7-character ID
 const generateId = () => {
   return Math.random().toString(36).substring(2, 9);
 };
@@ -31,76 +30,58 @@ const users = {
   ]
 };
 
-const findUserByName = (name) => {
-  return users["users_list"].filter((user) => user["name"] === name);
-};
-
-const findUserById = (id) => {
-  return users["users_list"].find((user) => user["id"] === id);
-};
-
 const addUser = (user) => {
   const newUser = { ...user, id: generateId() }; // Assign a random ID
-  users["users_list"].push(newUser);
-  return newUser;
+  users.users_list.push(newUser);
+  return newUser; // Return the new user object
 };
 
-const deleteUserById = (id) => {
-  const index = users["users_list"].findIndex((user) => user.id === id);
-  if (index !== -1) {
-    const deletedUser = users["users_list"].splice(index, 1);
-    return deletedUser;
-  } else {
-    return undefined;
+app.post("/users", (req, res) => {
+  const userToAdd = req.body;
+
+  // Validate user input
+  if (!userToAdd.name || !userToAdd.job) {
+    return res.status(400).send("Name and job are required.");
   }
-};
 
-const findUserByNameAndJob = (name, job) => {
-  return users["users_list"].filter((user) => user.name === name && user.job === job);
-};
+  const addedUser = addUser(userToAdd);
+
+  res.status(201).send(addedUser); // Return the new user with status 201
+});
 
 app.get("/users", (req, res) => {
-  const name = req.query.name;
-  const job = req.query.job;
+  const { name, job } = req.query;
 
-  let result;
+  let result = users.users_list;
+
   if (name && job) {
-    result = findUserByNameAndJob(name, job);
+    result = result.filter(user => user.name === name && user.job === job);
   } else if (name) {
-    result = findUserByName(name);
-  } else {
-    result = users.users_list;
+    result = result.filter(user => user.name === name);
   }
+
   res.send({ users_list: result });
 });
 
 app.get("/users/:id", (req, res) => {
-  const id = req.params["id"];
-  let result = findUserById(id);
-  if (result === undefined) {
-    res.status(404).send("Resource not found.");
-  } else {
-    res.send(result);
-  }
-});
+  const id = req.params.id;
+  const user = users.users_list.find(user => user.id === id);
 
-app.post("/users", (req, res) => {
-  const userToAdd = req.body;
-  const addedUser = addUser(userToAdd);
-
-  if (addedUser) {
-    res.status(201).send(addedUser); // Return new user with generated ID
-  } else {
-    res.status(400).send("User could not be added.");
+  if (!user) {
+    return res.status(404).send("User not found.");
   }
+
+  res.send(user);
 });
 
 app.delete("/users/:id", (req, res) => {
   const id = req.params.id;
-  const deletedUser = deleteUserById(id);
-  if (deletedUser === undefined) {
-    res.status(404).send("Resource not found. User could not be deleted.");
-  } else {
-    res.status(204).send();
+  const index = users.users_list.findIndex(user => user.id === id);
+
+  if (index === -1) {
+    return res.status(404).send("User not found.");
   }
+
+  users.users_list.splice(index, 1);
+  res.status(204).send();
 });

@@ -6,12 +6,12 @@ function Form(props) {
     name: "",
     job: ""
   });
-function handleChange(event) {
+
+  function handleChange(event) {
     const { name, value } = event.target;
-    if (name === "job")
-      setPerson({ name: person["name"], job: value });
-    else setPerson({ name: value, job: person["job"] });
+    setPerson((prevPerson) => ({ ...prevPerson, [name]: value }));
   }
+
   function submitForm() {
     fetch("http://localhost:8000/users", {
       method: "POST",
@@ -27,13 +27,13 @@ function handleChange(event) {
           throw new Error("Failed to create user");
         }
       })
-      .then((data) => {
-        props.handleSubmit(data); // Update the parent state only if the insertion succeeded
+      .then((newUser) => {
+        props.handleSubmit(newUser); // Update the parent state with the new user
         setPerson({ name: "", job: "" }); // Reset the form
       })
       .catch((error) => console.error("Error:", error));
   }
-  
+
   return (
     <form>
       <label htmlFor="name">Name</label>
@@ -56,4 +56,5 @@ function handleChange(event) {
     </form>
   );
 }
+
 export default Form;
