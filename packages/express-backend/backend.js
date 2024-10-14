@@ -1,4 +1,3 @@
-// backend.js
 import cors from "cors";
 import express from "express";
 
@@ -6,7 +5,13 @@ const app = express();
 const port = 8000;
 
 const generateId = () => {
-  return Math.random().toString(36).substring(2, 9);
+  const letters = Array.from({ length: 3 }, () =>
+    String.fromCharCode(97 + Math.floor(Math.random() * 26))
+  ).join("");
+
+  const numbers = Math.floor(Math.random() * 900) + 100;
+
+  return `${letters}${numbers}`;
 };
 
 app.use(cors());
@@ -31,22 +36,21 @@ const users = {
 };
 
 const addUser = (user) => {
-  const newUser = { ...user, id: generateId() }; // Assign a random ID
+  const newUser = { ...user, id: generateId() };
   users.users_list.push(newUser);
-  return newUser; // Return the new user object
+  return newUser;
 };
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
 
-  // Validate user input
   if (!userToAdd.name || !userToAdd.job) {
     return res.status(400).send("Name and job are required.");
   }
 
   const addedUser = addUser(userToAdd);
 
-  res.status(201).send(addedUser); // Return the new user with status 201
+  res.status(201).send(addedUser);
 });
 
 app.get("/users", (req, res) => {
@@ -55,9 +59,9 @@ app.get("/users", (req, res) => {
   let result = users.users_list;
 
   if (name && job) {
-    result = result.filter(user => user.name === name && user.job === job);
+    result = result.filter((user) => user.name === name && user.job === job);
   } else if (name) {
-    result = result.filter(user => user.name === name);
+    result = result.filter((user) => user.name === name);
   }
 
   res.send({ users_list: result });
@@ -65,7 +69,7 @@ app.get("/users", (req, res) => {
 
 app.get("/users/:id", (req, res) => {
   const id = req.params.id;
-  const user = users.users_list.find(user => user.id === id);
+  const user = users.users_list.find((user) => user.id === id);
 
   if (!user) {
     return res.status(404).send("User not found.");
@@ -76,7 +80,7 @@ app.get("/users/:id", (req, res) => {
 
 app.delete("/users/:id", (req, res) => {
   const id = req.params.id;
-  const index = users.users_list.findIndex(user => user.id === id);
+  const index = users.users_list.findIndex((user) => user.id === id);
 
   if (index === -1) {
     return res.status(404).send("User not found.");

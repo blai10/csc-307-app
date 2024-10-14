@@ -22,14 +22,14 @@ function Form(props) {
     })
       .then((response) => {
         if (response.status === 201) {
-          return response.json(); // Parse JSON if insertion is successful
+          return response.json(); 
         } else {
           throw new Error("Failed to create user");
         }
       })
       .then((newUser) => {
-        props.handleSubmit(newUser); // Update the parent state with the new user
-        setPerson({ name: "", job: "" }); // Reset the form
+        props.handleSubmit(newUser); 
+        setPerson({ name: "", job: "" }); 
       })
       .catch((error) => console.error("Error:", error));
   }

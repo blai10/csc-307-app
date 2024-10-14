@@ -6,16 +6,6 @@ import Form from "./Form";
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
-  function postUser(person) {
-    return fetch("http://localhost:8000/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(person),
-    });
-  }
-
   function fetchUsers() {
     return fetch("http://localhost:8000/users");
   }
@@ -47,13 +37,8 @@ function MyApp() {
       .catch((error) => console.error("Error deleting user:", error));
   }
 
-  function updateList(person) {
-    postUser(person)
-      .then((response) => response.json())
-      .then((newUser) => setCharacters([...characters, newUser]))
-      .catch((error) => {
-        console.log(error);
-      });
+  function updateList(newUser) {
+    setCharacters((prevCharacters) => [...prevCharacters, newUser]);
   }
 
   return (
