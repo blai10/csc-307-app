@@ -24,9 +24,9 @@ function MyApp() {
       method: "DELETE",
     })
       .then((response) => {
-        if (response.status === 204) {
+        if (response.status === 200) {
           setCharacters((prevCharacters) =>
-            prevCharacters.filter((character) => character.id !== id)
+            prevCharacters.filter((character) => character._id !== id)
           );
         } else if (response.status === 404) {
           console.error("User not found.");

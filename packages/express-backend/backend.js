@@ -72,7 +72,7 @@ app.get("/users/:id", (req, res) => {
       if (!deletedUser) {
       res.status(404).send("User not found.");
       } else {
-      res.status(204).send({ message: "User deleted successfully." });
+      res.status(200).send({ message: "User deleted successfully." });
       }
       })
       .catch((error) => {
